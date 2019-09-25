@@ -1,0 +1,25 @@
+@import 'vendors';
+@import 'variables';
+@import 'mixins';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  font-style: normal;
+  color: $darken-gray;
+  overflow-x: hidden;
+  min-width: $body-min-width;
+}
+
+@import '_blocks/blocks';
