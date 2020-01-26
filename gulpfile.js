@@ -4,7 +4,6 @@
 const gulp = require('gulp');
 const browserSync = require('browser-sync').create();
 const htmlhint = require('gulp-htmlhint');
-const prettyHtml = require('gulp-pretty-html');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const plumber = require('gulp-plumber');
@@ -84,12 +83,6 @@ function clean() {
 function buildHTML() {
   return gulp
     .src(dirs.src.html)
-    .pipe(
-      prettyHtml({
-        indent_size: 2,
-        extra_liners: [],
-      })
-    )
     .pipe(htmlhint('.htmlhintrc'))
     .pipe(htmlhint.reporter())
     .pipe(gulp.dest(dirs.dist.html));
