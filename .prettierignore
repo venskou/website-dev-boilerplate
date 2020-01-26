@@ -1,0 +1,50 @@
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
+yarn-error.log
+
+# Dependencies
+/node_modules
+
+# Project Files
+dist/*
+src/images/**/*.*
+src/vendors/**/*.*
+.editorconfig
+.eslintignore
+.eslintrc
+.gitignore
+.htmlhintrc
+.prettierignore
+.prettierrc
+.stylelintignore
+.stylelintrc
+.gitkeep
+yarn.lock
+package-lock.json
