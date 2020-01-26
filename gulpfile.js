@@ -18,6 +18,12 @@ const svgmin = require('gulp-svgmin');
 const svgstore = require('gulp-svgstore');
 const cheerio = require('gulp-cheerio');
 const babel = require('gulp-babel');
+const stylelint = require('stylelint');
+const postcss = require('gulp-postcss');
+const reporter = require('postcss-reporter');
+const postcssScss = require('postcss-scss');
+const fs = require('fs');
+const stylelintConfig = fs.readFileSync('.stylelintrc', 'utf8');
 
 // Config directories
 const dirs = {
@@ -113,6 +119,23 @@ function buildStyles() {
       })
     )
     .pipe(gulp.dest(dirs.dist.styles));
+}
+
+// Lint styles
+function lintStyles() {
+  const lintOptions = {
+    syntax: postcssScss,
+    processor: [stylelint(stylelintConfig), reporter({ clearReportedMessages: true })],
+  };
+
+  return gulp
+    .src(dirs.watch.styles)
+    .pipe(plumber())
+    .pipe(
+      postcss(lintOptions.processor, {
+        syntax: lintOptions.syntax,
+      })
+    );
 }
 
 // Build JS
@@ -257,7 +280,7 @@ function buildFonts() {
 // Watch files
 function watch() {
   gulp.watch(dirs.watch.html, gulp.series(buildHTML, reloadServer));
-  gulp.watch(dirs.watch.styles, gulp.series(buildStyles, reloadServer));
+  gulp.watch(dirs.watch.styles, gulp.series(lintStyles, buildStyles, reloadServer));
   gulp.watch(dirs.watch.js, gulp.series(buildJS, reloadServer));
   gulp.watch(dirs.watch.images, gulp.series(buildImages, reloadServer));
   gulp.watch(dirs.watch.svg, gulp.series(buildSVG, reloadServer));
@@ -279,11 +302,13 @@ exports.buildSVGSprite = buildSVGSprite;
 exports.buildFavicon = buildFavicon;
 exports.buildFonts = buildFonts;
 exports.buildVendors = buildVendors;
+exports.lintStyles = lintStyles;
 const build = gulp.series(
   clean,
   buildVendors,
   gulp.parallel(
     buildHTML,
+    lintStyles,
     buildStyles,
     buildJS,
     buildImages,
