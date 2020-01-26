@@ -24,12 +24,13 @@ const babel = require('gulp-babel');
 const dirs = {
   src: {
     html: 'src/*.html',
-    styles: 'src/styles/styles.scss',
+    styles: ['src/styles/styles.scss', 'src/styles/vendors/**/*.scss'],
     js: 'src/js/**/*.js',
     images: ['src/images/**/*.{png,jpg,gif}', '!src/images/favicon/**/*.*'],
     svg: ['src/images/**/*.svg', '!src/images/svg/sprite/**/*.svg', '!src/images/favicon/**/*.*'],
-    favicon: 'src/images/favicon/**/*.*',
     svgSprite: 'src/images/svg/sprite/**/*.svg',
+    favicon: 'src/images/favicon/**/*.*',
+    fonts: 'src/fonts/**/*.*',
     vendors: 'src/vendors/'
   },
   dist: {
@@ -37,17 +38,20 @@ const dirs = {
     styles: 'dist/styles/',
     js: 'dist/js/',
     images: 'dist/images/',
-    favicon: 'dist/images/favicon/',
     svgSprite: 'dist/images/svg/sprite/',
+    favicon: 'dist/images/favicon/',
+    fonts: 'dist/fonts/',
     vendors: 'dist/vendors/'
   },
   watch: {
     html: 'src/*.html',
-    styles: 'src/styles/**/*.scss',
+    styles: ['src/styles/**/*.scss', 'src/styles/vendors/**/*.scss'],
     js: 'src/js/**/*.js',
-    images: 'src/images/**/*.{png,jpg,gif}',
-    svg: ['src/images/**/*.svg', '!src/images/svg/sprite/**/*.svg'],
-    svgSprite: 'src/images/svg/sprite/**/*.svg'
+    images: ['src/images/**/*.{png,jpg,gif}', '!src/images/favicon/**/*.*'],
+    svg: ['src/images/**/*.svg', '!src/images/svg/sprite/**/*.svg', '!src/images/favicon/**/*.*'],
+    svgSprite: 'src/images/svg/sprite/**/*.svg',
+    favicon: 'src/images/favicon/**/*.*',
+    fonts: 'src/fonts/**/*.*',
   },
   clean: ['dist/*']
 };
@@ -78,8 +82,8 @@ function clean() {
 }
 
 // Build HTML
-function buildHTML(done) {
-  gulp.src(dirs.src.html)
+function buildHTML() {
+  return gulp.src(dirs.src.html)
     .pipe(prettyHtml({
       indent_size: 2,
       extra_liners: [],
@@ -87,12 +91,11 @@ function buildHTML(done) {
     .pipe(htmlhint('.htmlhintrc'))
     .pipe(htmlhint.reporter())
     .pipe(gulp.dest(dirs.dist.html));
-  done();
 }
 
 // Build styles
-function buildStyles(done) {
-  gulp.src(dirs.src.styles)
+function buildStyles() {
+  return gulp.src(dirs.src.styles)
     .pipe(plumber())
     .pipe(sass({
       outputStyle: 'expanded',
@@ -108,12 +111,11 @@ function buildStyles(done) {
       extname: '.css',
     }))
     .pipe(gulp.dest(dirs.dist.styles));
-  done();
 }
 
 // Build JS
-function buildJS(done) {
-  gulp.src(dirs.src.js)
+function buildJS() {
+  return gulp.src(dirs.src.js)
     .pipe(plumber())
     .pipe(babel({
       presets: ['@babel/env']
@@ -125,12 +127,11 @@ function buildJS(done) {
       extname: '.js'
     }))
     .pipe(gulp.dest(dirs.dist.js));
-  done();
 }
 
 // Build images
-function buildImages(done) {
-  gulp.src(dirs.src.images)
+function buildImages() {
+  return gulp.src(dirs.src.images)
     .pipe(imagemin([
       imagemin.optipng({
         optimizationLevel: 3
@@ -140,73 +141,52 @@ function buildImages(done) {
       })
     ]))
     .pipe(gulp.dest(dirs.dist.images));
-  done();
 }
 
-// Copy favicon
-function copyFavicon(done) {
-  gulp.src(dirs.src.favicon)
+// Build favicon
+function buildFavicon() {
+  return gulp.src(dirs.src.favicon)
     .pipe(gulp.dest(dirs.dist.favicon));
-  done();
 }
+
+// SVG Optimization Config
+const svgMinConfig = {
+  plugins: [{
+    removeDoctype: true
+  }, {
+    removeComments: true
+  }, {
+    removeViewBox: false
+  }, {
+    cleanupNumericValues: {
+      floatPrecision: 2
+    }
+  }, {
+    convertColors: {
+      names2hex: true,
+      rgb2hex: true
+    }
+  }, {
+    cleanupIDs: {
+      minify: true
+    }
+  }]
+};
 
 // Build SVG
-function buildSVG(done) {
-  gulp.src(dirs.src.svg)
+function buildSVG() {
+  return gulp.src(dirs.src.svg)
     .pipe(svgmin(function() {
-      return {
-        plugins: [{
-          removeDoctype: true
-        }, {
-          removeComments: true
-        }, {
-          removeViewBox: false
-        }, {
-          cleanupNumericValues: {
-            floatPrecision: 2
-          }
-        }, {
-          convertColors: {
-            names2hex: true,
-            rgb2hex: true
-          }
-        }, {
-          cleanupIDs: {
-            minify: true
-          }
-        }]
-      }
+      return svgMinConfig
     }))
     .pipe(gulp.dest(dirs.dist.images));
-  done();
 }
 
 // Build SVG sprite
-function buildSVGSprite(done) {
-  gulp.src(dirs.src.svgSprite)
+function buildSVGSprite() {
+  return gulp.src(dirs.src.svgSprite)
     .pipe(svgmin(function() {
-      return {
-        plugins: [{
-          removeDoctype: true
-        }, {
-          removeComments: true
-        }, {
-          removeViewBox: false
-        }, {
-          cleanupNumericValues: {
-            floatPrecision: 2
-          }
-        }, {
-          convertColors: {
-            names2hex: true,
-            rgb2hex: true
-          }
-        }, {
-          cleanupIDs: {
-            minify: true
-          }
-        }]
-      }
+      return svgMinConfig
     }))
     .pipe(cheerio({
       run: function($) {
@@ -229,15 +209,18 @@ function buildSVGSprite(done) {
     }))
     .pipe(rename('sprite.svg'))
     .pipe(gulp.dest(dirs.dist.svgSprite));
-  done();
 }
 
-// Copy vendors
-function copyVendors(done) {
-  gulp.src(npmDist(), { base: './node_modules/' })
+// Build vendors
+function buildVendors() {
+  return gulp.src(npmDist(), { base: './node_modules/' })
     .pipe(gulp.dest(dirs.src.vendors))
     .pipe(gulp.dest(dirs.dist.vendors));
-  done();
+}
+
+// Build fonts
+function buildFonts() {
+  return gulp.src(dirs.src.fonts).pipe(gulp.dest(dirs.dist.fonts));
 }
 
 // Watch files
@@ -248,6 +231,8 @@ function watch() {
   gulp.watch(dirs.watch.images, gulp.series(buildImages, reloadServer));
   gulp.watch(dirs.watch.svg, gulp.series(buildSVG, reloadServer));
   gulp.watch(dirs.watch.svgSprite, gulp.series(buildSVGSprite, reloadServer));
+  gulp.watch(dirs.watch.favicon, gulp.series(buildFavicon, reloadServer));
+  gulp.watch(dirs.watch.fonts, gulp.series(buildFonts, reloadServer));
 }
 
 // Export tasks
@@ -258,11 +243,12 @@ exports.buildHTML = buildHTML;
 exports.buildStyles = buildStyles;
 exports.buildJS = buildJS;
 exports.buildImages = buildImages;
-exports.copyFavicon = copyFavicon;
 exports.buildSVG = buildSVG;
 exports.buildSVGSprite = buildSVGSprite;
-exports.copyVendors = copyVendors;
-const build = gulp.series(clean, copyVendors, gulp.parallel(buildHTML, buildStyles, buildJS, buildImages, copyFavicon, buildSVG, buildSVGSprite));
+exports.buildFavicon = buildFavicon;
+exports.buildFonts = buildFonts;
+exports.buildVendors = buildVendors;
+const build = gulp.series(clean, buildVendors, gulp.parallel(buildHTML, buildStyles, buildJS, buildImages, buildFavicon, buildFonts, buildSVG, buildSVGSprite));
 exports.build = build;
 
 // Default task
