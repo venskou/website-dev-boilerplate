@@ -2,24 +2,32 @@
   "name": "website-dev-boilerplate",
   "version": "1.0.0",
   "description": "A professional front-end template for building fast, robust, and adaptable web apps or sites.",
-  "scripts": {
-    "start": "gulp",
-    "build": "gulp build",
-    "server": "gulp server"
+  "homepage": "https://github.com/venskou/website-dev-boilerplate#readme",
+  "bugs": {
+    "url": "https://github.com/venskou/website-dev-boilerplate/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/venskou/website-dev-boilerplate.git"
   },
+  "license": "MIT",
   "author": {
     "name": "Uladzislau Vensko",
     "email": "ulad.vensko@gmail.com"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/venskou/website-dev-boilerplate/issues"
+  "scripts": {
+    "build": "gulp build",
+    "server": "gulp server",
+    "start": "gulp"
   },
-  "homepage": "https://github.com/venskou/website-dev-boilerplate#readme",
+  "browserslist": [
+    "last 2 versions",
+    "IE 11"
+  ],
+  "dependencies": {
+    "normalize.css": "^8.0.1",
+    "svg4everybody": "^2.1.9"
+  },
   "devDependencies": {
     "@babel/core": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
@@ -42,13 +50,5 @@
     "gulp-uglify": "^3.0.2",
     "prettier": "^1.19.1",
     "prettier-plugin-packagejson": "^2.0.10"
-  },
-  "dependencies": {
-    "normalize.css": "^8.0.1",
-    "svg4everybody": "^2.1.9"
-  },
-  "browserslist": [
-    "last 2 versions",
-    "IE 11"
-  ]
+  }
 }

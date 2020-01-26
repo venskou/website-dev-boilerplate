@@ -31,7 +31,7 @@ const dirs = {
     svgSprite: 'src/images/svg/sprite/**/*.svg',
     favicon: 'src/images/favicon/**/*.*',
     fonts: 'src/fonts/**/*.*',
-    vendors: 'src/vendors/'
+    vendors: 'src/vendors/',
   },
   dist: {
     html: 'dist/',
@@ -41,7 +41,7 @@ const dirs = {
     svgSprite: 'dist/images/svg/sprite/',
     favicon: 'dist/images/favicon/',
     fonts: 'dist/fonts/',
-    vendors: 'dist/vendors/'
+    vendors: 'dist/vendors/',
   },
   watch: {
     html: 'src/*.html',
@@ -53,7 +53,7 @@ const dirs = {
     favicon: 'src/images/favicon/**/*.*',
     fonts: 'src/fonts/**/*.*',
   },
-  clean: ['dist/*']
+  clean: ['dist/*'],
 };
 
 // Local Server
@@ -77,17 +77,19 @@ function reloadServer(done) {
 
 // Clean dist folder
 function clean() {
-  return gulp.src(dirs.clean)
-    .pipe(rimraf());
+  return gulp.src(dirs.clean).pipe(rimraf());
 }
 
 // Build HTML
 function buildHTML() {
-  return gulp.src(dirs.src.html)
-    .pipe(prettyHtml({
-      indent_size: 2,
-      extra_liners: [],
-    }))
+  return gulp
+    .src(dirs.src.html)
+    .pipe(
+      prettyHtml({
+        indent_size: 2,
+        extra_liners: [],
+      })
+    )
     .pipe(htmlhint('.htmlhintrc'))
     .pipe(htmlhint.reporter())
     .pipe(gulp.dest(dirs.dist.html));
@@ -95,125 +97,161 @@ function buildHTML() {
 
 // Build styles
 function buildStyles() {
-  return gulp.src(dirs.src.styles)
+  return gulp
+    .src(dirs.src.styles)
     .pipe(plumber())
-    .pipe(sass({
-      outputStyle: 'expanded',
-      indentWidth: 2
-    }))
-    .pipe(autoprefixer({
-      cascade: true
-    }))
+    .pipe(
+      sass({
+        outputStyle: 'expanded',
+        indentWidth: 2,
+      })
+    )
+    .pipe(
+      autoprefixer({
+        cascade: true,
+      })
+    )
     .pipe(gulp.dest(dirs.dist.styles))
     .pipe(cssnano())
-    .pipe(rename({
-      suffix: '.min',
-      extname: '.css',
-    }))
+    .pipe(
+      rename({
+        suffix: '.min',
+        extname: '.css',
+      })
+    )
     .pipe(gulp.dest(dirs.dist.styles));
 }
 
 // Build JS
 function buildJS() {
-  return gulp.src(dirs.src.js)
+  return gulp
+    .src(dirs.src.js)
     .pipe(plumber())
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
+    .pipe(
+      babel({
+        presets: ['@babel/env'],
+      })
+    )
     .pipe(gulp.dest(dirs.dist.js))
     .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min',
-      extname: '.js'
-    }))
+    .pipe(
+      rename({
+        suffix: '.min',
+        extname: '.js',
+      })
+    )
     .pipe(gulp.dest(dirs.dist.js));
 }
 
 // Build images
 function buildImages() {
-  return gulp.src(dirs.src.images)
-    .pipe(imagemin([
-      imagemin.optipng({
-        optimizationLevel: 3
-      }),
-      imagemin.jpegtran({
-        progressive: true
-      })
-    ]))
+  return gulp
+    .src(dirs.src.images)
+    .pipe(
+      imagemin([
+        imagemin.optipng({
+          optimizationLevel: 3,
+        }),
+        imagemin.jpegtran({
+          progressive: true,
+        }),
+      ])
+    )
     .pipe(gulp.dest(dirs.dist.images));
 }
 
 // Build favicon
 function buildFavicon() {
-  return gulp.src(dirs.src.favicon)
-    .pipe(gulp.dest(dirs.dist.favicon));
+  return gulp.src(dirs.src.favicon).pipe(gulp.dest(dirs.dist.favicon));
 }
 
 // SVG Optimization Config
 const svgMinConfig = {
-  plugins: [{
-    removeDoctype: true
-  }, {
-    removeComments: true
-  }, {
-    removeViewBox: false
-  }, {
-    cleanupNumericValues: {
-      floatPrecision: 2
-    }
-  }, {
-    convertColors: {
-      names2hex: true,
-      rgb2hex: true
-    }
-  }, {
-    cleanupIDs: {
-      minify: true
-    }
-  }]
+  plugins: [
+    {
+      removeDoctype: true,
+    },
+    {
+      removeComments: true,
+    },
+    {
+      removeViewBox: false,
+    },
+    {
+      cleanupNumericValues: {
+        floatPrecision: 2,
+      },
+    },
+    {
+      convertColors: {
+        names2hex: true,
+        rgb2hex: true,
+      },
+    },
+    {
+      cleanupIDs: {
+        minify: true,
+      },
+    },
+  ],
 };
 
 // Build SVG
 function buildSVG() {
-  return gulp.src(dirs.src.svg)
-    .pipe(svgmin(function() {
-      return svgMinConfig
-    }))
+  return gulp
+    .src(dirs.src.svg)
+    .pipe(
+      svgmin(function() {
+        return svgMinConfig;
+      })
+    )
     .pipe(gulp.dest(dirs.dist.images));
 }
 
 // Build SVG sprite
 function buildSVGSprite() {
-  return gulp.src(dirs.src.svgSprite)
-    .pipe(svgmin(function() {
-      return svgMinConfig
-    }))
-    .pipe(cheerio({
-      run: function($) {
-        $('svg').attr('width', null).attr('height', null);
-      },
-      parserOptions: {
-        xmlMode: true
-      }
-    }))
-    .pipe(svgstore({
-      inlineSvg: true
-    }))
-    .pipe(cheerio({
-      run: function($) {
-        $('svg').attr('style', 'display: none');
-      },
-      parserOptions: {
-        xmlMode: true
-      }
-    }))
+  return gulp
+    .src(dirs.src.svgSprite)
+    .pipe(
+      svgmin(function() {
+        return svgMinConfig;
+      })
+    )
+    .pipe(
+      cheerio({
+        run: function($) {
+          $('svg')
+            .attr('width', null)
+            .attr('height', null);
+        },
+        parserOptions: {
+          xmlMode: true,
+        },
+      })
+    )
+    .pipe(
+      svgstore({
+        inlineSvg: true,
+      })
+    )
+    .pipe(
+      cheerio({
+        run: function($) {
+          $('svg').attr('style', 'display: none');
+        },
+        parserOptions: {
+          xmlMode: true,
+        },
+      })
+    )
     .pipe(rename('sprite.svg'))
     .pipe(gulp.dest(dirs.dist.svgSprite));
 }
 
 // Build vendors
 function buildVendors() {
-  return gulp.src(npmDist(), { base: './node_modules/' })
+  return gulp
+    .src(npmDist(), { base: './node_modules/' })
     .pipe(gulp.dest(dirs.src.vendors))
     .pipe(gulp.dest(dirs.dist.vendors));
 }
@@ -248,7 +286,20 @@ exports.buildSVGSprite = buildSVGSprite;
 exports.buildFavicon = buildFavicon;
 exports.buildFonts = buildFonts;
 exports.buildVendors = buildVendors;
-const build = gulp.series(clean, buildVendors, gulp.parallel(buildHTML, buildStyles, buildJS, buildImages, buildFavicon, buildFonts, buildSVG, buildSVGSprite));
+const build = gulp.series(
+  clean,
+  buildVendors,
+  gulp.parallel(
+    buildHTML,
+    buildStyles,
+    buildJS,
+    buildImages,
+    buildFavicon,
+    buildFonts,
+    buildSVG,
+    buildSVGSprite
+  )
+);
 exports.build = build;
 
 // Default task
