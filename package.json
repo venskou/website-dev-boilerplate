@@ -17,8 +17,33 @@
   },
   "scripts": {
     "build": "gulp build",
+    "lint-js": "eslint \"src/**/*.js\"",
+    "lint-js-fix": "eslint \"src/**/*.js\" --fix",
+    "list-styles": "stylelint \"src/styles/**/*.scss\"",
+    "list-styles-fix": "stylelint \"src/styles/**/*.scss\" --fix",
+    "precommit": "lint-staged",
+    "prettier": "prettier \"**/*.*\" --write",
     "server": "gulp server",
     "start": "gulp"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.*": [
+      "prettier --write",
+      "git add"
+    ],
+    "src/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "src/styles/**/*.scss": [
+      "stylelint \"src/styles/**/*.scss\" --fix",
+      "git add"
+    ]
   },
   "browserslist": [
     "last 2 versions",
