@@ -41,6 +41,7 @@
     "gulp-imagemin": "^6.1.0",
     "gulp-npm-dist": "^1.0.3",
     "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^8.0.0",
     "gulp-pretty-html": "^2.0.10",
     "gulp-rename": "^1.4.0",
     "gulp-rimraf": "^1.0.0",
@@ -48,7 +49,10 @@
     "gulp-svgmin": "^2.2.0",
     "gulp-svgstore": "^7.0.1",
     "gulp-uglify": "^3.0.2",
+    "postcss-reporter": "^6.0.1",
+    "postcss-scss": "^2.0.0",
     "prettier": "^1.19.1",
-    "prettier-plugin-packagejson": "^2.0.10"
+    "prettier-plugin-packagejson": "^2.0.10",
+    "stylelint": "^13.0.0"
   }
 }
