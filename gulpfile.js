@@ -18,6 +18,7 @@ const svgmin = require('gulp-svgmin');
 const svgstore = require('gulp-svgstore');
 const cheerio = require('gulp-cheerio');
 const babel = require('gulp-babel');
+const eslint = require('gulp-eslint');
 const stylelint = require('stylelint');
 const postcss = require('gulp-postcss');
 const reporter = require('postcss-reporter');
@@ -143,6 +144,8 @@ function buildJS() {
   return gulp
     .src(dirs.src.js)
     .pipe(plumber())
+    .pipe(eslint())
+    .pipe(eslint.format())
     .pipe(
       babel({
         presets: ['@babel/env'],

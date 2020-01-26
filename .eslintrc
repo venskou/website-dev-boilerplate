@@ -1,0 +1,11 @@
+{
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+  "globals": {
+    "svg4everybody": "writable"
+  },
+  "extends": ["airbnb-base", "prettier"],
+  "plugins": ["prettier"]
+}
